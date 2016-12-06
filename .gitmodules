@@ -1,3 +1,6 @@
 [submodule ".html"]
 	path = .html
 	url = git@github.com:mlgh/mlgh.github.io.git
+[submodule ".pdsite"]
+	path = .pdsite
+	url = git@github.com:mlgh/pdsite.git
