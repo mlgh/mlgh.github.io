@@ -6,6 +6,6 @@ outputfolder: .html
 
 # Site-wide template variables
 
-sitename: "Stuff"
+sitename: "mlgh"
 pagetitle-suffix: ""
 footer: ""
