@@ -1,5 +1,5 @@
 build: .PHONY
-	pdsite build
+	.pdsite/bin/pdsite build
 
 publish: .PHONY
 	git -C .html add '*' ||:
