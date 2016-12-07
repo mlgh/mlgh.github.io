@@ -1,4 +1,4 @@
-Some sample post $O(x^2)$
+Some sample post $\min (1, \frac{1}{x})$
 
 ```{.python}
 # Linear regression in Python
