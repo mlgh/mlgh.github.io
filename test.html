@@ -19,7 +19,6 @@
     	}
     	field.push(row_elems);
     }
-    field[5][3] = 1;
 
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
@@ -41,12 +40,12 @@
     function drawFields() {
 	    for (var row = 0; row < 10; row += 1) {
 	    	for (var col = 0; col < 10; col += 1) {
-	    		if (field[row][col] == 1) {
+	    		if (field[row][col] > 0) {
 
 	    			context.font = '40px serif';
 	    			context.textAlign='center';
 	    			context.textBaseline = 'middle';
-					context.strokeText('X', 0.5 + p + col * 40 + 20, 0.5 + p + row * 40 + 20, 40);
+					context.strokeText({1: 'X', 2: 'O'}[field[row][col]], 0.5 + p + col * 40 + 20, 0.5 + p + row * 40 + 20, 40);
 	    		}
 	    	}
 	    }
@@ -69,6 +68,54 @@ redraw();
 	    };
 	}
 
+	function findBest() {
+		var best_row = 0;
+		var best_col = 0;
+		var scores = [];
+	    for (var row = 0; row < field.length; row += 1) {
+	    	var row_elems = [];
+	    	for (var col = 0; col < field[0].length; col += 1) {
+	    		row_elems.push(0);
+	    	}
+	    	scores.push(row_elems);
+	    }
+
+		for (var row = 0; row + 1 < field.length; row += 1) {
+			for (var col = 0; col + 1 < field[0].length; col += 1) {
+				var num_ones = 0;
+				var num_twos = 0;
+				for (var rr = row; rr < row + 2; rr += 1) {
+					for (var cc = col; cc < col + 2; cc += 1) {
+						if (field[rr][cc] == 1) num_ones += 1;
+						if (field[rr][cc] == 2) num_twos += 1;
+					}
+				}
+				if (num_twos > 0) continue;
+				var boost = 0;
+				if (num_ones == 1) boost = 10;
+				if (num_ones == 2) boost = 100;
+				if (num_ones == 3) boost = 1000;
+				for (var rr = row; rr < row + 2; rr += 1) {
+					for (var cc = col; cc < col + 2; cc += 1) {
+						if (field[rr][cc] == 0) scores[rr][cc] += boost;
+					}
+				}		
+			}
+		}
+		var best_score = -1;
+		var result = null;
+		for (var row = 0; row < scores.length; row += 1) {
+			for (var col = 0; col < scores[0].length; col += 1) {
+				if (field[row][col] != 0) { continue; }
+				if (scores[row][col] > best_score) {
+					best_score = scores[row][col];
+					result = {row: row, col: col};
+				}
+			}
+		}
+		return result;
+	}
+
     function click1(event) {
     	var pos = getMousePos(canvas, event);
     	var x = pos.x - p;
@@ -81,6 +128,9 @@ redraw();
     	if (row < 0 || row >= field.length) { return; }
     	if (col < 0 || col >= field[0].length) { return; }
     	field[row][col] = 1;
+
+    	var resp = findBest();
+    	field[resp.row][resp.col] = 2;
     	redraw();
     }
     canvas.onclick = click1;
