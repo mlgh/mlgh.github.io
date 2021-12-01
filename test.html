@@ -1,1 +1,90 @@
-Hello <b>world!</b>
+<html>
+<head>
+
+</head>
+<body style=" background: lightblue;">
+    <canvas id="canvas" width="420px" height="420px" style="background: #fff;     magrin:20px;"></canvas>
+    <script type="text/javascript" language="javascript">
+    var bw = 400;
+    var bh = 400;
+    var p = 10;
+    var cw = bw + (p*2) + 1;
+    var ch = bh + (p*2) + 1;
+
+    var field = [];
+    for (var row = 0; row < 10; row += 1) {
+    	var row_elems = [];
+    	for (var col = 0; col < 10; col += 1) {
+    		row_elems.push(0);
+    	}
+    	field.push(row_elems);
+    }
+    field[5][3] = 1;
+
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    function drawBoard(){
+        for (var x = 0; x <= bw; x += 40) {
+            context.moveTo(0.5 + x + p, p);
+            context.lineTo(0.5 + x + p, bh + p);
+        }
+
+        for (var x = 0; x <= bh; x += 40) {
+            context.moveTo(p, 0.5 + x + p);
+            context.lineTo(bw + p, 0.5 + x + p);
+        }
+
+        context.strokeStyle = "black";
+        context.stroke();
+    }
+
+    function drawFields() {
+	    for (var row = 0; row < 10; row += 1) {
+	    	for (var col = 0; col < 10; col += 1) {
+	    		if (field[row][col] == 1) {
+
+	    			context.font = '40px serif';
+	    			context.textAlign='center';
+	    			context.textBaseline = 'middle';
+					context.strokeText('X', 0.5 + p + col * 40 + 20, 0.5 + p + row * 40 + 20, 40);
+	    		}
+	    	}
+	    }
+
+    }
+
+    function redraw() {
+    	context.clearRect(0, 0, canvas.width, canvas.height);
+    drawBoard();
+    drawFields();
+
+    }
+
+redraw();
+	function getMousePos(canvas, evt) {
+	    var rect = canvas.getBoundingClientRect();
+	    return {
+	      x: evt.clientX - rect.left,
+	      y: evt.clientY - rect.top
+	    };
+	}
+
+    function click1(event) {
+    	var pos = getMousePos(canvas, event);
+    	var x = pos.x - p;
+    	var y = pos.y - p;
+    	var row = Math.trunc(y / 40);
+    	var col = Math.trunc(x / 40);
+    	if (field[row][col] != 0) {
+    		return;
+    	}
+    	if (row < 0 || row >= field.length) { return; }
+    	if (col < 0 || col >= field[0].length) { return; }
+    	field[row][col] = 1;
+    	redraw();
+    }
+    canvas.onclick = click1;
+
+    </script>
+</body>
+</html>
